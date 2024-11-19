@@ -21,30 +21,38 @@ void main() {
 }
 
 Future makePdf() async {
-  // final pdf = pw.Document();
-  final pdf = pw.Document(
-    author: '作成者',
-    creator: 'クリエイター',
-    title: 'タイトル',
-    subject:  'サブジェクト',
-  );
-
+  final pdf = pw.Document();
+  
   final page = pw.Page(
-    pageTheme: pw.PageTheme(
-      orientation:pw.PageOrientation.landscape, // 1
-      pageFormat: PdfPageFormat.a4.copyWith( // 2
-        marginTop: 20,
-        marginBottom: 20,
-        marginLeft: 20,
-        marginRight: 20,
-      ),
-    ),
     build: (pw.Context context) {
       return pw.Center(
         child: pw.Text("PDF Test"),
       ); // Center
     }
-  ); 
+  );
+
+  List<pw.TableRow> tablerowList = [];
+  for(int i = 1; i <= 100; i++) {
+    tablerowList.add(
+      pw.TableRow(
+        children: [ pw.Text('Test$i'), pw.Text('$i') ,],
+      )
+    );
+  }
+
+  final table = pw.Table( // Tableウィジェット
+    border: pw.TableBorder.all(),
+    children: tablerowList,
+  );
+
+  final pageM = pw.MultiPage( // MultiPageウィジェット
+    build: (pw.Context context) {
+      return [ table, ]; // Center
+    }
+  );
+
   pdf.addPage(page); 
+  pdf.addPage(pageM); // マルチページ
+
   return pdf;
 }
