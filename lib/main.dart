@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-
-import 'package:flutter/services.dart'; // rootBundleで使用
 
 void main() {
   final body = Center( // ボディー
@@ -17,31 +13,20 @@ void main() {
   );  
 
   final sc = Scaffold(
-    body: body, // ボディー        
-  );
+    body: body,);
 
   final app = MaterialApp(home: sc);
   runApp(app);
 }
 
-Future makePdf() async { // PDF作成
-
-  final fontData = await rootBundle.load('assets/fonts/ShipporiMincho-Regular.ttf');
-  final font = pw.Font.ttf(fontData);
+Future makePdf() async {
+  
+  // フォントの取得
+  final font = await PdfGoogleFonts.shipporiMinchoRegular();
 
   final pdf = pw.Document();
-  
   final page = pw.Page(
-    build: (pw.Context context) {
-      return pw.Center(
-        child: pw.Text("PDF Test"),
-      ); // Center
-    }
-  );
-
-  final page2 = pw.Page(
-    pageTheme: pw.PageTheme( // ページのテーマ
-      pageFormat: PdfPageFormat.a4, // ついでにA4にして見る
+    pageTheme: pw.PageTheme(
       theme: pw.ThemeData.withFont(base: font), // フォントを設定
     ),
     build: (pw.Context context) {
@@ -51,6 +36,5 @@ Future makePdf() async { // PDF作成
     }
   ); 
   pdf.addPage(page); 
-  pdf.addPage(page2); 
   return pdf;
 }
