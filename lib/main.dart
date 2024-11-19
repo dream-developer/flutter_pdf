@@ -3,35 +3,47 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 void main() {
-  final body = Center( // ボディー
-    child: PdfPreview(// プレビューの表示
-      build: (format) async {
+
+    final buttonLayoutPdf = ElevatedButton(
+      onPressed: () async{ 
+        final pdf = await makePdf(); // 1
+        await Printing.layoutPdf( // 2 
+          onLayout: (_) async{
+            return await pdf.save(); // 3
+          },
+        );
+      },
+      child: const Text("印刷"), 
+    );
+    
+    final buttonSharePdf = ElevatedButton(
+      onPressed: () async{ 
         final pdf = await makePdf();
-        // .save()で「Uint8List」形式の作成
-        return await pdf.save();
-      },),
+        await Printing.sharePdf( // 4
+          bytes: await pdf.save(),
+          filename: 'test.pdf'
+        ,);
+      },
+      child: const Text("他のアプリケーションと共有"), 
+    );
+
+  final body = SafeArea( // ボディー
+    child: Column(
+      children: [buttonLayoutPdf, buttonSharePdf, ],
+    ),
   );  
 
-  final sc = Scaffold(
-    body: body,);
-
+  final sc = Scaffold( body: body,);
   final app = MaterialApp(home: sc);
   runApp(app);
 }
 
 Future makePdf() async {
-  
-  // フォントの取得
-  final font = await PdfGoogleFonts.shipporiMinchoRegular();
-
   final pdf = pw.Document();
   final page = pw.Page(
-    pageTheme: pw.PageTheme(
-      theme: pw.ThemeData.withFont(base: font), // フォントを設定
-    ),
     build: (pw.Context context) {
       return pw.Center(
-        child: pw.Text("テキスト"),
+        child: pw.Text("PDF Test"),
       ); // Center
     }
   ); 
