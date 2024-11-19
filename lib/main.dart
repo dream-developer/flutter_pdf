@@ -7,22 +7,24 @@ import 'package:printing/printing.dart';
 void main() {
   final body = Center( // ボディー
     child: PdfPreview(// プレビューの表示
+      allowPrinting: true, // 印刷許可だけ残す（これも含め全てfalseでプレビューワーのみになります）
+      allowSharing: false,
+      canChangeOrientation: false,
+      canChangePageFormat: false,
+      canDebug: false,
       build: (format) async {
-        final pdf = await makePdf();
+        final pdf = await makePdf();// PDF作成関数
         // .save()で「Uint8List」形式の作成
         return await pdf.save();
-      },),
+      },
+    ),
   );  
 
-  final sc = Scaffold(
-    body: body, // ボディー        
-  );
-
+  final sc = Scaffold( body: body, );
   final app = MaterialApp(home: sc);
   runApp(app);
 }
-
-// PDF作成
+// PDF作成関数
 Future makePdf() async {
   final pdf = pw.Document();
   final page = pw.Page(
